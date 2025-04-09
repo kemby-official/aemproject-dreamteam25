@@ -8,7 +8,7 @@ R_EARTH = 6.371e6  # Earth radius (m)
 ALTITUDE_LEO = 400e3  # LEO altitude (m)
 
 # Variables
-intial_pos = [R_EARTH + 400e3, 0]
+intial_pos = [R_EARTH + ALTITUDE_LEO, 0.0]
 intial_vel = [0, 7670]
 
 
