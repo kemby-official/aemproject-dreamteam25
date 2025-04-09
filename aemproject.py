@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-%matplotlib inline
+#%matplotlib inline
 
 # Constants
 MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
@@ -87,7 +87,9 @@ def calculate_energy(trajectory,dt):
     return kinetic, potential, total
 
 plt.figure(figsize=(8, 8))
-# plot your trajectory here 
+compute_acceleration(intial_pos)
+simulate_spacecraft(intial_pos,intial_vel)
+calculate_energy(10,5)
 
 plt.gca().add_patch(plt.Circle((0, 0), R_EARTH, color='blue', alpha=0.2))  # please includie this line to plot the earth
 plt.title("LEO Trajectory")
