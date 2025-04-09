@@ -35,6 +35,7 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     vel = np.array(initial_vel, dtype='float64')
     trajectory = [pos.copy()]
     t = 0
+    distance = 10
     escaped = False
 
     while t <= t_total:
@@ -45,9 +46,10 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
             print('Spacecraft crashed!')
             break
         # Check for escape
-        if r > 10 * R_EARTH and not escaped:
+        if r > distance * R_EARTH and not escaped:
             print(f'Spacecraft escaped at t = {t} s!')
             escaped = True
+
 
         # Compute acceleration
         acc = compute_acceleration(pos)
