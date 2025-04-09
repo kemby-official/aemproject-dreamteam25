@@ -7,6 +7,10 @@ MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
 R_EARTH = 6.371e6  # Earth radius (m)
 ALTITUDE_LEO = 400e3  # LEO altitude (m)
 
+# Variables
+intial_pos = [R_EARTH + 400e3, 0]
+intial_vel = [0, 7670]
+
 
 def compute_acceleration(position):
     """
