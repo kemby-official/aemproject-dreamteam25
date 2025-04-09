@@ -62,8 +62,23 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     return np.array(trajectory)  # using numpy array to store the trajecotry
 
 
-def calculate_energy(trajectory, dt):
+def calculate_energy(trajectory,dt):
     """Computes kinetic, potential, and total energy, given a trajectory"""
-    velocities =  # Approximate velocity using difference, which can be computed using np.diff
-
+    # Approximate velocity using difference, which can be computed using np.diff
+    velocities = np.diff(trajectory, axis=0) / dt  # shape (n-1, 2)
+    speeds = np.linalg.norm(velocities, axis=1)    # magnitude of velocity (v)
+    
+    # Kinetic energy: KE = 0.5 * v^2 (mass-neutral)
+    kinetic = 0.5 * speeds**2
+    
+    # Use trajectory[:-1] to align with velocities
+    positions = trajectory[:-1]
+    distances = np.linalg.norm(positions, axis=1)  
+    
+    # Potential energy: PE = -mu / r
+    potential = -MU / distances
+    
+    # Total energy
+    total = kinetic + potential
+    
     return kinetic, potential, total
