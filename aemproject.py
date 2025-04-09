@@ -85,3 +85,12 @@ def calculate_energy(trajectory,dt):
     total = kinetic + potential
     
     return kinetic, potential, total
+
+plt.figure(figsize=(8, 8))
+# plot your trajectory here 
+
+plt.gca().add_patch(plt.Circle((0, 0), R_EARTH, color='blue', alpha=0.2))  # please includie this line to plot the earth
+plt.title("LEO Trajectory")
+plt.legend()
+plt.grid(True)
+plt.show()
