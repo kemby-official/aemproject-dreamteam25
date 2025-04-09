@@ -1,6 +1,5 @@
 import numpy as np
 import matplotlib.pyplot as plt
-%matplotlib inline
 
 # Constants
 MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
