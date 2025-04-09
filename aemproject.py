@@ -11,7 +11,6 @@ ALTITUDE_LEO = 500e3  # LEO altitude (m)
 initial_pos = [R_EARTH + ALTITUDE_LEO, 0]
 initial_vel = [0, 11200]
 
-
 def compute_acceleration(position):
     """
     Parameters:
@@ -24,7 +23,6 @@ def compute_acceleration(position):
     acceleration = -MU / r ** 3 * r_vec
     return acceleration
 
-
 def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     """
     Simulates for t_total seconds (1.5 hrs = ~1 LEO orbit).
@@ -35,7 +33,7 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     vel = np.array(initial_vel, dtype='float64')
     trajectory = [pos.copy()]
     t = 0
-    distance = 10
+    distance = 10 # when distance <=6, it prints the escape message correctly, but when it's >6 it doesn't. UGH! 
     escaped = False
 
     while t <= t_total:
@@ -46,10 +44,9 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
             print('Spacecraft crashed!')
             break
         # Check for escape
-        if r > distance * R_EARTH and not escaped:
+        if r >= distance * R_EARTH and not escaped: # <- right here, officer!
             print(f'Spacecraft escaped at t = {t} s!')
             escaped = True
-
 
         # Compute acceleration
         acc = compute_acceleration(pos)
@@ -63,7 +60,6 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
 
     return np.array(trajectory)
 
-
 def calculate_energy(trajectory, dt):
     """Computes kinetic, potential, and total energy, given a trajectory"""
     velocities = np.diff(trajectory, axis=0) / dt
@@ -74,7 +70,6 @@ def calculate_energy(trajectory, dt):
     potential = -MU / distances
     total = kinetic + potential
     return kinetic, potential, total
-
 
 # Simulate
 trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=6000)
