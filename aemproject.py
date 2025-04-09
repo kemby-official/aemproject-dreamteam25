@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # CHANGE THESE VARIABLES FOR TESTING
-altitude = 400e3
-init_velocity = 7670
+altitude = 400e3 #m from surface
+init_velocity = 7670 #m/s
 
 # Constants
 MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
