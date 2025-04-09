@@ -6,6 +6,10 @@ MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
 R_EARTH = 6.371e6  # Earth radius (m)
 ALTITUDE_LEO = 400e3  # LEO altitude (m)
 
+# Variables
+ 
+intial_pos = [R_EARTH + ALTITUDE_LEO, 0]
+intial_vel = [0, 7670]
 
 def compute_acceleration(position):
     """
@@ -67,10 +71,6 @@ def calculate_energy(trajectory, dt):
     potential = -MU / distances
     total = kinetic + potential
     return kinetic, potential, total
-
-# Initial conditions for LEO
-initial_pos = [R_EARTH + ALTITUDE_LEO, 0.0]
-initial_vel = [0.0, 7670.0]  # m/s
 
 # Simulate
 trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=6000)
