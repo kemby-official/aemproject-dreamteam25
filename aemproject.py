@@ -1,15 +1,18 @@
 import numpy as np
 import matplotlib.pyplot as plt
 
+# CHANGE THESE VARIABLES FOR TESTING
+altitude = 400e3
+init_velocity = 7670
+
 # Constants
 MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
 R_EARTH = 6.371e6  # Earth radius (m)
-ALTITUDE_LEO = 500e3  # LEO altitude (m)
+ALTITUDE_LEO = altitude  # LEO altitude (m)
 
 # Variables
-
 initial_pos = [R_EARTH + ALTITUDE_LEO, 0]
-initial_vel = [0, 11200]
+initial_vel = [0, init_velocity]
 
 def compute_acceleration(position):
     """
@@ -33,7 +36,7 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=1):
     vel = np.array(initial_vel, dtype='float64')
     trajectory = [pos.copy()]
     t = 0
-    distance = 10
+    distance = 10 # when distance <=6, it prints the escape message correctly, but when it's >6 it doesn't. UGH!
     escaped = False
 
     while t <= t_total:
@@ -44,7 +47,7 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=1):
             print('Spacecraft crashed!')
             break
         # Check for escape
-        if r >= distance * R_EARTH and not escaped:
+        if r >= distance * R_EARTH and not escaped: # <- right here, officer!
             print(f'Spacecraft escaped at t = {t} s!')
             escaped = True
 
@@ -72,7 +75,7 @@ def calculate_energy(trajectory, dt):
     return kinetic, potential, total
 
 # Simulate
-trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=12000) # <- this was only equal to 6000, not giving the spacecraft time to escape. 
+trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=12000)
 kinetic, potential, total_energy = calculate_energy(trajectory, dt=10)
 
 # Plot trajectory
