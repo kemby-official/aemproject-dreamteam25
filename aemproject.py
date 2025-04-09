@@ -1,19 +1,35 @@
 import numpy as np
 import matplotlib.pyplot as plt
-# %matplotlib
-# inline
 
 # Constants
 MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
 R_EARTH = 6.371e6  # Earth radius (m)
-ALTITUDE_LEO = 400e3  # LEO altitude (m)
+ALTITUDE_LEO = 500e3  # LEO altitude (m)
+
+# Variables
+
+initial_pos = [R_EARTH + ALTITUDE_LEO, 0]
+initial_vel = [0, 11200]
+
+
+def compute_acceleration(position):
+    """
+    Parameters:
+        position: [x, y] in meters
+    Returns:
+        [a_x, a_y] in m/s^2, represented by numpy array
+    """
+    r_vec = np.array(position)
+    r = np.linalg.norm(r_vec)
+    acceleration = -MU / r ** 3 * r_vec
+    return acceleration
 
 
 def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     """
     Simulates for t_total seconds (1.5 hrs = ~1 LEO orbit).
     Parameters: initial_pos in meters, initial_vel in m/s, dt in seconds, t_total
-    Return: trajectory 
+    Return: trajectory
     """
     pos = np.array(initial_pos, dtype='float64')
     vel = np.array(initial_vel, dtype='float64')
@@ -46,41 +62,32 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     return np.array(trajectory)
 
 
-def compute_acceleration(position):
-    """
-    Parameters:
-        position: [x, y] in meters
-    Returns:
-        [a_x, a_y] in m/s^2, represented by numpy array
-    """
-    r_vec = np.array(position)
-    r = np.linalg.norm(r_vec)
-    acceleration = -MU / r ** 3 * r_vec
-    return acceleration
+def calculate_energy(trajectory, dt):
+    """Computes kinetic, potential, and total energy, given a trajectory"""
+    velocities = np.diff(trajectory, axis=0) / dt
+    speeds = np.linalg.norm(velocities, axis=1)
+    kinetic = 0.5 * speeds ** 2
+    positions = trajectory[:-1]
+    distances = np.linalg.norm(positions, axis=1)
+    potential = -MU / distances
+    total = kinetic + potential
+    return kinetic, potential, total
 
-
-MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
-R_EARTH = 6.371e6  # Earth radius (m)
-ALTITUDE_LEO = 400e3  # LEO altitude (m)
-# Initial conditions for LEO
-initial_pos = [R_EARTH + ALTITUDE_LEO, 0.0]
-initial_vel = [0.0, 7670.0]  # m/s
 
 # Simulate
 trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=6000)
+kinetic, potential, total_energy = calculate_energy(trajectory, dt=10)
 
-# Plot
-
+# Plot trajectory
 plt.figure(figsize=(8, 8))
 plt.plot(trajectory[:, 0], trajectory[:, 1], label="LEO Orbit")
-# plot your trajectory here 
-
-plt.gca().add_patch(plt.Circle((0, 0), R_EARTH, color='blue', alpha=0.2))  # please includie this line to plot the earth
+plt.gca().add_patch(plt.Circle((0, 0), R_EARTH, color='blue', alpha=0.2))
 plt.title("LEO Trajectory")
 plt.legend()
 plt.grid(True)
 plt.show()
 
+# Plot energy
 plt.figure()
 plt.plot(kinetic, label="Kinetic")
 plt.plot(potential, label="Potential")
@@ -88,6 +95,6 @@ plt.plot(total_energy, label="Total")
 plt.title("Energy Conservation in LEO")
 plt.xlabel("Time Step")
 plt.ylabel("Energy (J/kg)")
-plt.legend()  # please including the legends 
+plt.legend()
 plt.grid(True)
 plt.show()
