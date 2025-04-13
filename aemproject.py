@@ -1,42 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
-
-# CHANGE THESE VARIABLES FOR TESTING
-altitude = 400e3 #m from surface
-init_velocity = 7670 #m/s
+%matplotlib inline
 
 # Constants
-MU = 3.986e14  # Earth's gravitational parameter (m^3/s^2)
-R_EARTH = 6.371e6  # Earth radius (m)
-ALTITUDE_LEO = altitude  # LEO altitude (m)
+MU = 3.986e14          # Earth's gravitational parameter (m^3/s^2)
+R_EARTH = 6.371e6      # Earth radius (m)
+ALTITUDE_LEO = 400e3   # LEO altitude (m)
 
-# Variables
-initial_pos = [R_EARTH + ALTITUDE_LEO, 0]
-initial_vel = [0, init_velocity]
-
-def compute_acceleration(position):
-    """
-    Parameters:
-        position: [x, y] in meters
-    Returns:
-        [a_x, a_y] in m/s^2, represented by numpy array
-    """
-    r_vec = np.array(position)
-    r = np.linalg.norm(r_vec)
-    acceleration = -MU / r ** 3 * r_vec
-    return acceleration
-
-def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=1):
+def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=10000):
     """
     Simulates for t_total seconds (1.5 hrs = ~1 LEO orbit).
     Parameters: initial_pos in meters, initial_vel in m/s, dt in seconds, t_total
-    Return: trajectory
+    Return: trajectory 
     """
     pos = np.array(initial_pos, dtype='float64')
     vel = np.array(initial_vel, dtype='float64')
     trajectory = [pos.copy()]
     t = 0
-    distance = 10 # when distance <=6, it prints the escape message correctly, but when it's >6 it doesn't. UGH!
     escaped = False
 
     while t <= t_total:
@@ -47,7 +27,7 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=1):
             print('Spacecraft crashed!')
             break
         # Check for escape
-        if r >= distance * R_EARTH and not escaped: # <- right here, officer!
+        if r > 10 * R_EARTH and not escaped:
             print(f'Spacecraft escaped at t = {t} s!')
             escaped = True
 
@@ -63,31 +43,63 @@ def simulate_spacecraft(initial_pos, initial_vel, dt=1, t_total=1):
 
     return np.array(trajectory)
 
-def calculate_energy(trajectory, dt):
-    """Computes kinetic, potential, and total energy, given a trajectory"""
-    velocities = np.diff(trajectory, axis=0) / dt
-    speeds = np.linalg.norm(velocities, axis=1)
-    kinetic = 0.5 * speeds ** 2
-    positions = trajectory[:-1]
-    distances = np.linalg.norm(positions, axis=1)
-    potential = -MU / distances
-    total = kinetic + potential
-    return kinetic, potential, total
+def compute_acceleration(position):
+    """
+    Parameters:
+        position: [x, y] in meters
+    Returns:
+        [a_x, a_y] in m/s^2, represented by numpy array
+    """
+    r_vec = np.array(position)
+    r = np.linalg.norm(r_vec)
+    acceleration = -MU / r ** 3 * r_vec
+    return acceleration
+    
+MU = 3.986e14          # Earth's gravitational parameter (m^3/s^2)
+R_EARTH = 6.371e6      # Earth radius (m)
+ALTITUDE_LEO = 400e3   # LEO altitude (m)
+# Initial conditions for LEO
+initial_pos = [R_EARTH + ALTITUDE_LEO, 0.0]
+initial_vel = [0.0, 7670.0]  # m/s
 
 # Simulate
-trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=12000)
-kinetic, potential, total_energy = calculate_energy(trajectory, dt=10)
+trajectory = simulate_spacecraft(initial_pos, initial_vel, dt=10, t_total=6000)
 
-# Plot trajectory
+# Plot
+
 plt.figure(figsize=(8, 8))
 plt.plot(trajectory[:, 0], trajectory[:, 1], label="LEO Orbit")
-plt.gca().add_patch(plt.Circle((0, 0), R_EARTH, color='blue', alpha=0.2))
+# plot your trajectory here 
+
+plt.gca().add_patch(plt.Circle((0, 0), R_EARTH, color='blue', alpha=0.2))  # please includie this line to plot the earth
 plt.title("LEO Trajectory")
 plt.legend()
 plt.grid(True)
 plt.show()
 
-# Plot energy
+def calculate_energy(trajectory, dt):
+    """Computes kinetic, potential, and total energy, given a trajectory"""
+    velocities = np.diff(trajectory, axis=0) / dt
+    speeds = np.linalg.norm(velocities, axis=1)
+
+    # Kinetic energy (mass-neutral)
+    kinetic = 0.5 * speeds**2
+
+    # Use trajectory[:-1] to align with velocity steps
+    positions = trajectory[:-1]
+    distances = np.linalg.norm(positions, axis=1)
+
+    # Potential energy
+    potential = -MU / distances
+
+    # Total energy
+    total = kinetic + potential
+
+    return kinetic, potential, total
+# compute and plot the energy
+kinetic, potential, total_energy = calculate_energy(trajectory, dt=10)
+# compute the potential, kinetic and total energy
+
 plt.figure()
 plt.plot(kinetic, label="Kinetic")
 plt.plot(potential, label="Potential")
@@ -95,6 +107,6 @@ plt.plot(total_energy, label="Total")
 plt.title("Energy Conservation in LEO")
 plt.xlabel("Time Step")
 plt.ylabel("Energy (J/kg)")
-plt.legend()
+plt.legend()  # please including the legends 
 plt.grid(True)
 plt.show()
